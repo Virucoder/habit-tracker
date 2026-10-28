@@ -54,3 +54,93 @@ Aplikacja webowa stworzona w React, która pomaga śledzić codzienne nawyki, mo
 ## Przechowywanie danych
 
 Aplikacja wykorzystuje `localStorage`, dlatego profile i ich dane są przechowywane w przeglądarce na danym urządzeniu. Nie jest to system kont oparty na serwerze, a dane nie synchronizują się automatycznie pomiędzy urządzeniami.
+
+
+
+## Wybrane fragmenty kodu
+
+### 1. Zapisywanie danych
+
+Aplikacja zapisuje nawyki w `localStorage`, dzięki czemu pozostają dostępne po odświeżeniu strony.
+
+```jsx
+useEffect(() => {
+    if (!user || !tasksLoaded) {
+        return;
+    }
+
+    const key = getStorageKey(user);
+
+    const data = {
+        tasks,
+        year: getCurrentYear(),
+        updatedAt: new Date().toISOString()
+    };
+
+    localStorage.setItem(
+        key,
+        JSON.stringify(data)
+    );
+}, [tasks, user, tasksLoaded]);
+```
+
+### 2. Zmiana motywu
+
+```jsx
+useEffect(() => {
+    document.body.classList.toggle(
+        "light",
+        theme === "light"
+    );
+
+    localStorage.setItem(THEME_KEY, theme);
+}, [theme]);
+```
+
+### 3. Podział na komponenty
+
+```jsx
+<Tracker tasks={tasks} setTasks={setTasks} />
+
+<Calendar tasks={tasks} />
+
+<Summary
+    tasks={tasks}
+    summaryDay={summaryDay}
+    setSummaryDay={setSummaryDay}
+/>
+```
+
+### 3. Architektura komponentów
+
+Interfejs został podzielony na komponenty `Tracker`, `Calendar` i `Summary`. Główny komponent przekazuje im potrzebne dane i funkcje za pomocą propsów.
+
+```jsx
+<section id="content">
+    <div id="tracker">
+        <Tracker
+            tasks={tasks}
+            setTasks={setTasks}
+        />
+    </div>
+
+    <div id="calendar">
+        <Calendar tasks={tasks} />
+    </div>
+
+    <div className="summary-container">
+        <Summary
+            tasks={tasks}
+            summaryDay={summaryDay}
+            setSummaryDay={setSummaryDay}
+        />
+    </div>
+</section>
+```
+
+
+## Uruchom aplikację
+
+[**Demo:**](https://virucoder.github.io/habit-tracker/)
+
+**Kod źródłowy wybranych komponentów:** dostępny w repozytorium projektu.
